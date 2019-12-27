@@ -4,12 +4,15 @@ import com.google.firebase.database.Exclude;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "customer_table")
 public class Customer {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
+    @NonNull
     private String id;
     private String firstName;
     private String lastName;

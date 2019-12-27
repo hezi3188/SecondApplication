@@ -1,11 +1,13 @@
 package com.example.secondapplication.Entities;
+import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import java.util.Date;
 
 @Entity(tableName = "parcel_table")
 public class Parcel {
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
+    @NonNull
     private String  parcelID;
     private ParcelType parcelType;
     private boolean isFragile;

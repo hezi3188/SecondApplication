@@ -2,6 +2,10 @@ package com.example.secondapplication.Entities;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+import androidx.room.TypeConverters;
+
+import com.example.secondapplication.Util.Converter;
+
 import java.util.Date;
 
 @Entity(tableName = "parcel_table")

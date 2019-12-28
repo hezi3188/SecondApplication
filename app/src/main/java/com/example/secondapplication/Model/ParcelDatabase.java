@@ -7,10 +7,13 @@ import androidx.annotation.NonNull;
 import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
+import androidx.room.TypeConverters;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.example.secondapplication.Entities.Parcel;
+import com.example.secondapplication.Util.Converter;
 
+@TypeConverters(Converter.class)
 @Database(entities = {Parcel.class},version = 1)
 public abstract class ParcelDatabase extends RoomDatabase {
     private static ParcelDatabase instance;

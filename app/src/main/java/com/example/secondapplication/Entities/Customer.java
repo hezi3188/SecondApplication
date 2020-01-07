@@ -28,6 +28,19 @@ public class Customer {
     public Customer() {
     }
 
+    public Customer(@NonNull String id, String firstName, String lastName, String city, String country, String street, int buildingNumber, int postalAddress, String phoneNumber, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.city = city;
+        this.country = country;
+        this.street = street;
+        this.buildingNumber = buildingNumber;
+        this.postalAddress = postalAddress;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+    }
+
     //---------Methods-------------//
     @Exclude
     public String getAddress(){
@@ -83,7 +96,7 @@ public class Customer {
     public void setPostalAddress(int postalAddress) {
         this.postalAddress = postalAddress;
     }
-    @Exclude
+
     public String getId() {
         return id;
     }

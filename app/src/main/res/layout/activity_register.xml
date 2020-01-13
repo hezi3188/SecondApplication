@@ -68,56 +68,19 @@
                 android:inputType="number"
                 android:selectAllOnFocus="true" />
 
-            <EditText
-                android:id="@+id/country"
+            <AutoCompleteTextView
+                android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
 
 
-                android:hint="Enter your country"
+                android:hint="Enter your full address"
                 android:inputType="textEmailAddress"
                 android:selectAllOnFocus="true" />
 
 
-            <EditText
-                android:id="@+id/city"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
 
 
-                android:hint="Enter your city"
-                android:inputType="textEmailAddress"
-                android:selectAllOnFocus="true" />
-
-            <EditText
-                android:id="@+id/street"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-
-
-                android:hint="Enter your street"
-                android:inputType="textEmailAddress"
-                android:selectAllOnFocus="true" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/buildingNumber"
-                    android:layout_width="140dp"
-                    android:layout_height="match_parent"
-                    android:hint="Number"
-                    android:inputType="number"></EditText>
-
-                <EditText
-                    android:id="@+id/postalAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Postal"
-                    android:inputType="number"></EditText>
-            </LinearLayout>
 
             <EditText
                 android:id="@+id/phoneNumber"

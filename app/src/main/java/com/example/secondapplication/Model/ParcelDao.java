@@ -25,6 +25,9 @@ public interface ParcelDao {
     @Query("DELETE FROM parcel_table")
     void deleteAllParcels();
 
-    @Query("SELECT * FROM parcel_table ORDER BY getParcelDate DESC")
-    LiveData<List<Parcel>> getAllParcels();
+    @Query("SELECT * FROM parcel_table Where status<>'ACCEPTED' ORDER BY getParcelDate DESC")
+    LiveData<List<Parcel>> getAllParcelsUserNotAccepted();
+
+    @Query("SELECT * FROM parcel_table Where status='ACCEPTED' ORDER BY getParcelDate DESC")
+    LiveData<List<Parcel>> getAllParcelsUserAccepted();
 }

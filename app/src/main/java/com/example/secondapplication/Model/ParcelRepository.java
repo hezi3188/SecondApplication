@@ -1,10 +1,14 @@
 package com.example.secondapplication.Model;
 
 import android.app.Application;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
+import com.example.secondapplication.Entities.Customer;
 import com.example.secondapplication.Entities.Parcel;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -13,20 +17,51 @@ import java.util.List;
 
 public class ParcelRepository {
     private ParcelDao parcelDao;
-    private DatabaseReference parcelsRef;
+    private CustomerDao customerDao;
+    private ParcelDataSource parcelDataSource;
+    private LiveData<List<Customer>> customer;
 
-    private LiveData<List<Parcel>> allParcels;
+    private LiveData<List<Parcel>> allParcelsUserNotAccepted;
+    private LiveData<List<Parcel>> allParcelsUserAccepted;
+
+    SharedPreferences sharedPreferences;
+    public static final String myPreference = "myUser";
+    public static final String myLatitude = "latitudeKey";
+    public static final String myLongitude = "longitudeKey";
 
     public ParcelRepository(Application application) {
-        ParcelDatabase database = ParcelDatabase.getInstance(application);
-        // Write a message to the database
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        parcelsRef = firebaseDatabase.getReference("parcels");
+        ParcelDatabase parcelDatabase = ParcelDatabase.getInstance(application);
+        CustomerDatabase customerDatabase = CustomerDatabase.getInstance(application);
+        parcelDataSource=ParcelDataSource.getInstance();
+        parcelDao = parcelDatabase.parcelDao();
+        customerDao=customerDatabase.customerDao();
 
-        parcelDao = database.parcelDao();
 
-        allParcels = parcelDao.getAllParcels();
+
+
+
+        allParcelsUserAccepted = parcelDao.getAllParcelsUserAccepted();
+        allParcelsUserNotAccepted = parcelDao.getAllParcelsUserNotAccepted();
+        ParcelDataSource.notifyUserParcelList(new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
+            @Override
+            public void onDataChanged(List<Parcel> obj) {
+
+                deleteAllParcels();
+                for (Parcel p: obj) {
+                    insert(p);
+                }
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+
+            }
+        });
     }
+
+
+
+
 
     public void insert(Parcel parcel) { new InsertParcelAsyncTask(parcelDao).execute(parcel);}
 
@@ -42,10 +77,41 @@ public class ParcelRepository {
         new DeleteAllParcelsAsyncTask(parcelDao).execute();
     }
 
-    public LiveData<List<Parcel>> getAllParcels() {
-        return allParcels;
+
+
+    public LiveData<List<Parcel>> getAllParcelsUserAccepted() {return allParcelsUserAccepted;}
+
+    public LiveData<List<Parcel>> getAllParcelsUserNotAccepted(){return allParcelsUserNotAccepted;}
+
+    public LiveData<List<Parcel>> getAllOfferParcels(Context context){
+        sharedPreferences = context.getSharedPreferences(myPreference,
+                Context.MODE_PRIVATE);
+        String s=sharedPreferences.getString(myLatitude,"");
+        final MutableLiveData<List<Parcel>> offer=new MutableLiveData<>();
+        ParcelDataSource.notifyOffersParcelList(new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
+            @Override
+            public void onDataChanged(List<Parcel> obj) {
+                offer.setValue(obj);
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+
+            }
+        });
+        return offer;
     }
 
+    public void acceptedParcel(String id, final ParcelDataSource.Action<String> action){
+        ParcelDataSource.acceptedParcel(id,action);
+    }
+
+    public void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+        ParcelDataSource.addDelivery(id,deliveryName,action);
+    }
+    public void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+        ParcelDataSource.confirmDelivery(id,deliveryName,action);
+    }
     //region AsyncTask implementation
 
     private static class InsertParcelAsyncTask extends AsyncTask<Parcel, Void, Void> {

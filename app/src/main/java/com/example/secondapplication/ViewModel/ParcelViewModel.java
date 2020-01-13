@@ -18,7 +18,7 @@ public class ParcelViewModel extends AndroidViewModel {
     public ParcelViewModel(@NonNull Application application) {
         super(application);
         repository = new ParcelRepository(application);
-        allParcels = repository.getAllParcels();
+        allParcels = repository.getAllParcelsUserAccepted();
     }
 
     public void insert(Parcel parcel) {

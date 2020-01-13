@@ -1,8 +1,11 @@
 package com.example.secondapplication.ui.login;
 
 import android.content.Intent;
+import android.location.Geocoder;
 import android.os.Bundle;
 
+import com.example.secondapplication.Entities.Parcel;
+import com.example.secondapplication.Model.ParcelDataSource;
 import com.example.secondapplication.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -27,11 +30,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
+import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private FirebaseAuth firebaseAuth;
     private AppBarConfiguration mAppBarConfiguration;
+    List<Parcel> parcels;
+    TextView textView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +79,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        textView=(TextView)findViewById(R.id.text_home);
+        parcels=new ArrayList<>();
+
+
+
+
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

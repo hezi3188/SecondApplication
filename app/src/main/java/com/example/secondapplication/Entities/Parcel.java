@@ -7,6 +7,8 @@ import androidx.room.TypeConverters;
 import com.example.secondapplication.Util.Converter;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Entity(tableName = "parcel_table")
 public class Parcel {
@@ -24,13 +26,14 @@ public class Parcel {
     private String deliveryName;
     private String customerId;
     private String address;
+    private Map<String, Boolean> messengers;
 
 
 
 
     //-------------Ctors--------------------//
     public Parcel() {
-
+        messengers =new HashMap<>();
         this.status = ParcelStatus.SENT;
         this.deliveryName = "NO";
         this.getParcelDate = new Date(System.currentTimeMillis());
@@ -43,6 +46,14 @@ public class Parcel {
 
     //--------------Ges&Set-----------------//
 
+
+    public Map<String, Boolean> getMessengers() {
+        return messengers;
+    }
+
+    public void setMessengers(Map<String, Boolean> messengers) {
+        this.messengers = messengers;
+    }
 
     public String getAddress() {
         return address;
@@ -143,19 +154,16 @@ public class Parcel {
 
     //------------------------------------------//
 
+    public void putMessenger(String deliveryName,Boolean status){
+        messengers.put(deliveryName,status);
+
+    }
+
     @Override
     public String toString() {
         return "Parcel{" +
-                ", parcelID=" + parcelID +
-                ", parcelType=" + parcelType +
-                ", isFragile=" + isFragile +
-                ", parcelWeight=" + parcelWeight +
-                ", Latitude=" + Latitude +
-                ", Longitude=" + Longitude +
-                ", deliveryParcelDate=" + deliveryParcelDate +
-                ", getParcelDate=" + getParcelDate +
+                "parcelID='" + parcelID + '\'' +
                 ", status=" + status +
-                ", deliveryName='" + deliveryName + '\'' +
                 ", customerId='" + customerId + '\'' +
                 '}';
     }

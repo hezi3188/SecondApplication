@@ -7,7 +7,11 @@ import com.example.secondapplication.Entities.ParcelStatus;
 import com.example.secondapplication.Entities.ParcelType;
 import com.example.secondapplication.Entities.ParcelWeight;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 public  class Converter{
@@ -111,4 +115,32 @@ public  class Converter{
         }
         return null;
     }
+
+    @TypeConverter
+    public static   String fromMapToString(Map<String,Boolean> messengers){
+        if(messengers.size()==0)
+            return "";
+        String value="";
+        for (Map.Entry<String,Boolean>entry:messengers.entrySet()) {
+            String convert="("+entry.getKey()+","+entry.getValue()+")|";
+            value=value+convert;
+        }
+        value=value.substring(0,value.length()-1);
+        return value;
+    }
+
+    @TypeConverter
+    public static Map<String,Boolean> fromStringToMap(String messengersString){
+        if(messengersString.equals(""))
+            return null;
+        String[] messengersList=messengersString.split("\\|");
+        Map<String,Boolean> messengers=new HashMap<>();
+        for (String str:messengersList) {
+            String []temp=str.substring(1,str.length()-1).split(",");
+
+            messengers.put(temp[0],Boolean.parseBoolean(temp[1]));
+        }
+        return messengers;
+    }
+
 }

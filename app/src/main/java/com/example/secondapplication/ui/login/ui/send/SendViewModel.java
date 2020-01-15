@@ -1,19 +1,30 @@
 package com.example.secondapplication.ui.login.ui.send;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class SendViewModel extends ViewModel {
+import com.example.secondapplication.Entities.Parcel;
+import com.example.secondapplication.Model.ParcelRepository;
+import com.example.secondapplication.ui.login.RegisterActivity;
 
-    private MutableLiveData<String> mText;
+import java.util.List;
 
-    public SendViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is send fragment");
+public class SendViewModel extends AndroidViewModel {
+
+    private ParcelRepository repository;
+    private LiveData<List<Parcel>> mText;
+
+    public SendViewModel(Application application) {
+        super(application);
+        repository=new ParcelRepository(application);
+      //  mText = repository.getAllOfferParcels(application);
     }
 
-    public LiveData<String> getText() {
+    public LiveData<List<Parcel>> getText() {
         return mText;
     }
 }

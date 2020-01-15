@@ -57,7 +57,6 @@ public class HomeFragment extends Fragment {
     @Override
     public void onPause() {
         Toast.makeText(getContext(), "onPause", Toast.LENGTH_SHORT).show();
-        ParcelDataSource.stopNotifyOffersParcelList();
         super.onPause();
     }
 

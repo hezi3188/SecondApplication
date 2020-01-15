@@ -1,12 +1,12 @@
 package com.example.secondapplication.ui.login;
 
 import android.content.Intent;
-import android.location.Geocoder;
 import android.os.Bundle;
 
 import com.example.secondapplication.Entities.Parcel;
-import com.example.secondapplication.Model.ParcelDataSource;
 import com.example.secondapplication.R;
+import com.example.secondapplication.ViewModel.ParcelViewModel;
+import com.example.secondapplication.ui.login.ui.UserManagementViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -21,8 +22,6 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -30,16 +29,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import android.view.Menu;
-import android.widget.AutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    UserManagementViewModel userManagementViewModel;
     private FirebaseAuth firebaseAuth;
     private AppBarConfiguration mAppBarConfiguration;
     List<Parcel> parcels;
@@ -49,6 +46,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        userManagementViewModel =ViewModelProviders.of(this).get(UserManagementViewModel.class);
+       // parcelViewModel=ViewModelProviders.of(this).get(ParcelViewModel.class);
+
 
         firebaseAuth=FirebaseAuth.getInstance();
 
@@ -108,7 +109,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.action_logout:
-                firebaseAuth.signOut();
+
+                userManagementViewModel.logOut();
                 finish();
                 startActivity(new Intent(this,LoginActivity.class));
                 return true;

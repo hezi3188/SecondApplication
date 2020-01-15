@@ -1,16 +1,12 @@
 package com.example.secondapplication.Util;
 
 import androidx.room.TypeConverter;
-import androidx.room.TypeConverters;
 
 import com.example.secondapplication.Entities.ParcelStatus;
 import com.example.secondapplication.Entities.ParcelType;
 import com.example.secondapplication.Entities.ParcelWeight;
-
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 

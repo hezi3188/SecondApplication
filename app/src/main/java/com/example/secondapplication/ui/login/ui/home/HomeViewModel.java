@@ -19,7 +19,7 @@ public class HomeViewModel extends AndroidViewModel {
         super(application);
         repository = new ParcelRepository(application);
 
-        allParcels=repository.getAllOfferParcels(getApplication());
+        allParcels=repository.getAllParcelsUserNotAccepted();
         // allParcels.setValue("This is home fragment");
 
 

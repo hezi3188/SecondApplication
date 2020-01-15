@@ -2,50 +2,34 @@ package com.example.secondapplication.Model;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
 import com.example.secondapplication.Entities.Customer;
 import com.example.secondapplication.Entities.Parcel;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
 
 public class ParcelRepository {
-    private ParcelDao parcelDao;
-    private CustomerDao customerDao;
-    private ParcelDataSource parcelDataSource;
-    private LiveData<List<Customer>> customer;
+
+    private static ParcelDao parcelDao;
 
     private LiveData<List<Parcel>> allParcelsUserNotAccepted;
     private LiveData<List<Parcel>> allParcelsUserAccepted;
 
-    SharedPreferences sharedPreferences;
-    public static final String myPreference = "myUser";
-    public static final String myLatitude = "latitudeKey";
-    public static final String myLongitude = "longitudeKey";
 
     public ParcelRepository(Application application) {
         ParcelDatabase parcelDatabase = ParcelDatabase.getInstance(application);
-        CustomerDatabase customerDatabase = CustomerDatabase.getInstance(application);
-        parcelDataSource=ParcelDataSource.getInstance();
         parcelDao = parcelDatabase.parcelDao();
-        customerDao=customerDatabase.customerDao();
 
-
-
-
-
+        //load parcels
         allParcelsUserAccepted = parcelDao.getAllParcelsUserAccepted();
         allParcelsUserNotAccepted = parcelDao.getAllParcelsUserNotAccepted();
+
+        ParcelDataSource.stopNotifyUserParcelList();
         ParcelDataSource.notifyUserParcelList(new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
             @Override
             public void onDataChanged(List<Parcel> obj) {
-
                 deleteAllParcels();
                 for (Parcel p: obj) {
                     insert(p);
@@ -73,7 +57,7 @@ public class ParcelRepository {
         new DeleteParcelAsyncTask(parcelDao).execute(parcel);
     }
 
-    public void deleteAllParcels() {
+    public static void deleteAllParcels() {
         new DeleteAllParcelsAsyncTask(parcelDao).execute();
     }
 
@@ -84,13 +68,12 @@ public class ParcelRepository {
     public LiveData<List<Parcel>> getAllParcelsUserNotAccepted(){return allParcelsUserNotAccepted;}
 
     public LiveData<List<Parcel>> getAllOfferParcels(Context context){
-        sharedPreferences = context.getSharedPreferences(myPreference,
-                Context.MODE_PRIVATE);
-        String s=sharedPreferences.getString(myLatitude,"");
+        ParcelDataSource.stopNotifyOffersParcelList();
         final MutableLiveData<List<Parcel>> offer=new MutableLiveData<>();
-        ParcelDataSource.notifyOffersParcelList(new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
+        ParcelDataSource.notifyOffersParcelList(context,new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
             @Override
             public void onDataChanged(List<Parcel> obj) {
+
                 offer.setValue(obj);
             }
 
@@ -109,9 +92,13 @@ public class ParcelRepository {
     public void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.addDelivery(id,deliveryName,action);
     }
+
     public void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.confirmDelivery(id,deliveryName,action);
     }
+
+
+
     //region AsyncTask implementation
 
     private static class InsertParcelAsyncTask extends AsyncTask<Parcel, Void, Void> {

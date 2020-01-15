@@ -1,19 +1,29 @@
 package com.example.secondapplication.ui.login.ui.gallery;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+import com.example.secondapplication.Entities.Parcel;
+import com.example.secondapplication.Model.ParcelRepository;
 
-    private MutableLiveData<String> mText;
+import java.util.List;
 
-    public GalleryViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+public class GalleryViewModel extends AndroidViewModel {
+
+    private LiveData<List<Parcel>> allParcels;
+    private ParcelRepository repository;
+
+    public GalleryViewModel(Application application) {
+        super(application);
+        repository=new ParcelRepository(application);
+
+        allParcels = repository.getAllParcelsUserAccepted();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<Parcel>> getText() {
+        return allParcels;
     }
 }

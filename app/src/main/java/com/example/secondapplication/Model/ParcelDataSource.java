@@ -1,5 +1,8 @@
 package com.example.secondapplication.Model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -50,6 +53,10 @@ public class ParcelDataSource {
     static FirebaseUser firebaseUser;
     static List<Parcel> userParcelList;
     static List<Parcel> offerParcelList;
+    static SharedPreferences sharedPreferences;
+    public static final String myPreference = "myUser";
+    public static final String myLatitude = "latitudeKey";
+    public static final String myLongitude = "longitudeKey";
     static {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         firebaseAuth=FirebaseAuth.getInstance();
@@ -73,7 +80,6 @@ public class ParcelDataSource {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
-                    //if(parcel)
                     userParcelList.add(parcel);
                     notifyParcelsDataChange.onDataChanged(userParcelList);
                 }
@@ -118,13 +124,12 @@ public class ParcelDataSource {
     }
     public static void stopNotifyUserParcelList(){
         if(parcelsUserChildEventListener !=null){
-            Query query=reference.orderByChild("customerId").equalTo(Utils.encodeUserEmail(firebaseUser.getEmail()));
-            query.removeEventListener(parcelsUserChildEventListener);
+            reference.removeEventListener(parcelsUserChildEventListener);
             parcelsUserChildEventListener =null;
         }
     }
 
-    public static void notifyOffersParcelList(final NotifyDataChange<List<Parcel>> notifyParcelsDataChange){
+    public static void notifyOffersParcelList(Context context,final NotifyDataChange<List<Parcel>> notifyParcelsDataChange){
         if(notifyParcelsDataChange != null){
             if (parcelsOffersChildEventListener != null){
                 notifyParcelsDataChange.onFailure(new Exception("ERROR"));
@@ -132,14 +137,22 @@ public class ParcelDataSource {
             }
             offerParcelList.clear();
 
+            sharedPreferences = context.getSharedPreferences(myPreference,Context.MODE_PRIVATE);
+
+            //get user location
+            final double latitude=Double.parseDouble(sharedPreferences.getString(myLatitude,""));
+            final double longitude=Double.parseDouble(sharedPreferences.getString(myLongitude,""));
+
             parcelsOffersChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
 
+                    //calculate distance location
+                    double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
                     firebaseUser=firebaseAuth.getCurrentUser();
                     //if its my parcel
-                    if((parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
                         return;
 
 
@@ -151,8 +164,11 @@ public class ParcelDataSource {
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
 
-                    //if someone offer the parcel; Remove the parcel
-                    if(parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY){
+                    //calculate distance location
+                    double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
+
+                    //if someone offer the parcel or the location move; Remove the parcel
+                    if(distance>50.0||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY){
                         for(int i = 0; i< offerParcelList.size(); i++){
                             if(parcel.getParcelID().equals(offerParcelList.get(i).getParcelID())){
                                 offerParcelList.remove(i);
@@ -171,9 +187,10 @@ public class ParcelDataSource {
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
+                    double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
 
                     //if its my parcel
-                    if((parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
                         return;
 
                     for(int i = 0; i< offerParcelList.size(); i++){

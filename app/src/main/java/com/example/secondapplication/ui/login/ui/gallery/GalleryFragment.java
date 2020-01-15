@@ -12,7 +12,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.example.secondapplication.Entities.Parcel;
 import com.example.secondapplication.R;
+
+import java.util.List;
 
 
 public class GalleryFragment extends Fragment {
@@ -25,10 +28,10 @@ public class GalleryFragment extends Fragment {
                 ViewModelProviders.of(this).get(GalleryViewModel.class);
         View root = inflater.inflate(R.layout.fragment_gallery, container, false);
         final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(this, new Observer<String>() {
+        galleryViewModel.getText().observe(this, new Observer<List<Parcel>>() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onChanged(List<Parcel> parcels) {
+                textView.setText(parcels.toString());
             }
         });
         return root;

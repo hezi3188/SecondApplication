@@ -2,6 +2,7 @@ package com.example.secondapplication.Model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.provider.ContactsContract;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +23,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ParcelDataSource {
@@ -46,6 +48,10 @@ public class ParcelDataSource {
         void  onDataChanged(T obj);
         void onFailure(Exception exception);
     }
+    public interface ServiceNotify<T>{
+        void  onNewChildAdded(T obj);
+        void onFailure(Exception exception);
+    }
 
     //----------startFields----------//
     static DatabaseReference reference;
@@ -66,6 +72,7 @@ public class ParcelDataSource {
     }
     private static ChildEventListener parcelsUserChildEventListener;
     private static ChildEventListener parcelsOffersChildEventListener;
+    private static ChildEventListener serviceChildEventListener;
 
     //--------------methods------------------//
     public static void notifyUserParcelList(final NotifyDataChange<List<Parcel>> notifyParcelsDataChange){
@@ -128,6 +135,71 @@ public class ParcelDataSource {
             parcelsUserChildEventListener =null;
         }
     }
+    public static void notifyService(Context context,final ServiceNotify<Parcel> parcelServiceNotify){
+        if(parcelServiceNotify != null){
+            if (serviceChildEventListener != null){
+                parcelServiceNotify.onFailure(new Exception("ERROR"));
+                return;
+            }
+            sharedPreferences = context.getSharedPreferences(myPreference,Context.MODE_PRIVATE);
+
+            //get user location
+            final double latitude=Double.parseDouble(sharedPreferences.getString(myLatitude,""));
+            final double longitude=Double.parseDouble(sharedPreferences.getString(myLongitude,""));
+            final Date currentDate=new Date(System.currentTimeMillis());
+            serviceChildEventListener=new ChildEventListener() {
+                @Override
+                public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    Parcel parcel = dataSnapshot.getValue(Parcel.class);
+
+                    //if the parcel is old
+                    if(currentDate.after(parcel.getGetParcelDate()))
+                        return;
+
+                    //if the user logout
+                    if(firebaseAuth.getCurrentUser()==null)
+                        return;
+                    //calculate distance location
+                    double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
+
+                    firebaseUser=firebaseAuth.getCurrentUser();
+                    //if its my parcel
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
+                        return;
+
+
+                    parcelServiceNotify.onNewChildAdded(parcel);
+                }
+
+                @Override
+                public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            };
+        }
+        reference.addChildEventListener(serviceChildEventListener);
+        }
+    public static void stopNotifyService(){
+        if(serviceChildEventListener !=null){
+            reference.removeEventListener(serviceChildEventListener);
+            serviceChildEventListener =null;
+        }
+    }
 
     public static void notifyOffersParcelList(Context context,final NotifyDataChange<List<Parcel>> notifyParcelsDataChange){
         if(notifyParcelsDataChange != null){
@@ -147,7 +219,6 @@ public class ParcelDataSource {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
-
                     //calculate distance location
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
                     firebaseUser=firebaseAuth.getCurrentUser();

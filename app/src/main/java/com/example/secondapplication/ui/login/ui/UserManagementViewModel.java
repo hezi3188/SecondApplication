@@ -2,6 +2,7 @@ package com.example.secondapplication.ui.login.ui;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
@@ -11,6 +12,7 @@ import com.example.secondapplication.Entities.Customer;
 import com.example.secondapplication.Model.ParcelDataSource;
 import com.example.secondapplication.Model.ParcelRepository;
 import com.example.secondapplication.Util.Utils;
+import com.example.secondapplication.ui.login.ParcelService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -118,6 +120,8 @@ public class UserManagementViewModel extends AndroidViewModel {
         ParcelDataSource.stopNotifyUserParcelList();
         ParcelDataSource.stopNotifyOffersParcelList();
         ParcelRepository.deleteAllParcels();
+        ParcelDataSource.stopNotifyService();
+        getApplication().stopService(new Intent(getApplication().getBaseContext(),ParcelService.class));
         auth.signOut();
 
     }

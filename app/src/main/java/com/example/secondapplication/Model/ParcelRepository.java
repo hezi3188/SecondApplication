@@ -85,15 +85,15 @@ public class ParcelRepository {
         return offer;
     }
 
-    public void acceptedParcel(String id, final ParcelDataSource.Action<String> action){
+    public  void acceptedParcel(String id, final ParcelDataSource.Action<String> action){
         ParcelDataSource.acceptedParcel(id,action);
     }
 
-    public void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+    public  void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.addDelivery(id,deliveryName,action);
     }
 
-    public void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+    public  void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.confirmDelivery(id,deliveryName,action);
     }
 

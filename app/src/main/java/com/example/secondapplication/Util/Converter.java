@@ -27,14 +27,14 @@ public  class Converter{
     }
 
     @TypeConverter
-    public String fromParcelStatusToString(ParcelStatus parcelStatus){
+    public static String fromParcelStatusToString(ParcelStatus parcelStatus){
         switch (parcelStatus) {
             case SENT:
                 return "SENT";
             case IN_COLLECTION_PROCESS:
-                return "IN_COLLECTION_PROCESS";
+                return "OFFERED";
             case ON_THE_WAY:
-                return "ON_THE_WAY";
+                return "ON THE WAY";
             case ACCEPTED:
                 return "ACCEPTED";
         }
@@ -46,9 +46,9 @@ public  class Converter{
         switch (s){
             case "SENT":
                 return ParcelStatus.SENT;
-            case "IN_COLLECTION_PROCESS":
+            case "OFFERED":
                 return ParcelStatus.IN_COLLECTION_PROCESS;
-            case "ON_THE_WAY":
+            case "ON THE WAY":
                 return ParcelStatus.ON_THE_WAY;
             case "ACCEPTED":
                 return ParcelStatus.ACCEPTED;
@@ -57,14 +57,14 @@ public  class Converter{
     }
 
     @TypeConverter
-    public String fromParcelTypeToString(ParcelType parcelType){
+    public static String fromParcelTypeToString(ParcelType parcelType){
         switch (parcelType) {
             case ENVELOPE:
-                return "ENVELOPE";
+                return "envelop";
             case SMALL_PACKAGE:
-                return "SMALL_PACKAGE";
+                return "small package";
             case BIG_PACKAGE:
-                return "BIG_PACKAGE";
+                return "big package";
         }
         return null;
     }
@@ -72,27 +72,27 @@ public  class Converter{
     @TypeConverter
     public ParcelType fromStringToParcelType(String s){
         switch (s){
-            case "ENVELOPE":
+            case "envelop":
                 return ParcelType.ENVELOPE;
-            case "SMALL_PACKAGE":
+            case "small package":
                 return ParcelType.SMALL_PACKAGE;
-            case "BIG_PACKAGE":
+            case "big package":
                 return ParcelType.BIG_PACKAGE;
         }
         return null;
     }
 
     @TypeConverter
-    public String fromParcelWeightToString(ParcelWeight parcelWeight){
+    public static String fromParcelWeightToString(ParcelWeight parcelWeight){
         switch (parcelWeight) {
             case UNTIL_500_GR:
-                return "UNTIL_500_GR";
+                return "until 500 gr";
             case UNTIL_1_KG:
-                return "UNTIL_1_KG";
+                return "until 1 kg";
             case UNTIL_5_KG:
-                return "UNTIL_5_KG";
+                return "until 5 kg";
             case UNTIL_20_KG:
-                return "UNTIL_20_KG";
+                return "until 20 kg";
         }
         return null;
     }
@@ -100,13 +100,13 @@ public  class Converter{
     @TypeConverter
     public ParcelWeight fromStringToParcelWeight(String s){
         switch (s){
-            case "UNTIL_500_GR":
+            case "until 500 gr":
                 return ParcelWeight.UNTIL_500_GR;
-            case "UNTIL_1_KG":
+            case "until 1 kg":
                 return ParcelWeight.UNTIL_1_KG;
-            case "UNTIL_5_KG":
+            case "until 5 kg":
                 return ParcelWeight.UNTIL_5_KG;
-            case "UNTIL_20_KG":
+            case "until 20 kg":
                 return ParcelWeight.UNTIL_20_KG;
         }
         return null;

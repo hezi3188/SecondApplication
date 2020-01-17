@@ -352,12 +352,13 @@ public class ParcelDataSource {
                     public void onSuccess(Void aVoid) {
                         action.OnSuccess("Confirm deliver "+deliveryName+" is succeeded");
                     }
-                }).addOnSuccessListener(new OnSuccessListener<Void>() {
+                }).addOnFailureListener(new OnFailureListener() {
                     @Override
-                    public void onSuccess(Void aVoid) {
+                    public void onFailure(@NonNull Exception e) {
                         action.OnFailure(new Exception("Error"));
                     }
-                });
+                }
+            );
             }
 
             @Override

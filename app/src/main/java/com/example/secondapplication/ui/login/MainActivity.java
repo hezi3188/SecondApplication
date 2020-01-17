@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.example.secondapplication.Entities.Parcel;
+import com.example.secondapplication.Model.ParcelDataSource;
 import com.example.secondapplication.R;
 import com.example.secondapplication.ViewModel.ParcelViewModel;
 import com.example.secondapplication.ui.login.ui.UserManagementViewModel;
@@ -51,7 +52,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         userManagementViewModel =ViewModelProviders.of(this).get(UserManagementViewModel.class);
        // parcelViewModel=ViewModelProviders.of(this).get(ParcelViewModel.class);
 
+        /*ParcelDataSource.addDelivery("-LyQV6DzDqP99KPG8rO0", "mom@gmail.com", new ParcelDataSource.Action<String>() {
+            @Override
+            public void OnSuccess(String obj) {
 
+            }
+
+            @Override
+            public void OnFailure(Exception exception) {
+
+            }
+
+            @Override
+            public void OnProgress(String status, double percent) {
+
+            }
+        });*/
         firebaseAuth=FirebaseAuth.getInstance();
 
         if(firebaseAuth.getCurrentUser()==null){
@@ -82,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
 
-        textView=(TextView)findViewById(R.id.text_home);
+        //textView=(TextView)findViewById(R.id.text_home);
         parcels=new ArrayList<>();
 
 

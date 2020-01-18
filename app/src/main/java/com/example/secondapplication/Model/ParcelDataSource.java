@@ -37,7 +37,13 @@ public class ParcelDataSource {
             instance=new ParcelDataSource();
         return instance;
     }
-
+    public interface OnUserNotify<Parcel>{
+        void onStart();
+        void onChildAdd(Parcel p);
+        void onChildUpdate(Parcel p);
+        void onChildRemoved(Parcel p);
+        void onFailure(Exception exception);
+    }
     //--------interfaces-----------//
     public interface  Action<T>{
         void OnSuccess(T obj);
@@ -75,43 +81,47 @@ public class ParcelDataSource {
     private static ChildEventListener serviceChildEventListener;
 
     //--------------methods------------------//
-    public static void notifyUserParcelList(final NotifyDataChange<List<Parcel>> notifyParcelsDataChange){
+    public static void notifyUserParcelList(final OnUserNotify<Parcel> notifyParcelsDataChange){
         if(notifyParcelsDataChange != null){
             if (parcelsUserChildEventListener != null){
                 notifyParcelsDataChange.onFailure(new Exception("ERROR"));
                 return;
             }
             userParcelList.clear();
-
+            notifyParcelsDataChange.onStart();
             parcelsUserChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
-                    userParcelList.add(parcel);
-                    notifyParcelsDataChange.onDataChanged(userParcelList);
+                    //userParcelList.add(parcel);
+                    notifyParcelsDataChange.onChildAdd(parcel);
                 }
 
                 @Override
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
+                    notifyParcelsDataChange.onChildUpdate(parcel);
+/*
                     for(int i = 0; i< userParcelList.size(); i++){
                         if(parcel.getParcelID().equals(userParcelList.get(i).getParcelID())){
-                            userParcelList.set(i,parcel);
+                            //userParcelList.set(i,parcel);
+                            notifyParcelsDataChange.onChildUpdate(parcel);
                         }
-                    }
-                    notifyParcelsDataChange.onDataChanged(userParcelList);
+                    }*/
+                   // notifyParcelsDataChange.onDataChanged(userParcelList);
                 }
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
-                    for(int i = 0; i< userParcelList.size(); i++){
+                    notifyParcelsDataChange.onChildRemoved(parcel);
+                  /*  for(int i = 0; i< userParcelList.size(); i++){
                         if(parcel.getParcelID().equals(userParcelList.get(i).getParcelID())){
                             userParcelList.remove(i);
                             break;
                         }
                     }
-                    notifyParcelsDataChange.onDataChanged(userParcelList);
+                    notifyParcelsDataChange.onDataChanged(userParcelList);*/
                 }
 
                 @Override
@@ -222,8 +232,8 @@ public class ParcelDataSource {
                     //calculate distance location
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
                     firebaseUser=firebaseAuth.getCurrentUser();
-                    //if its my parcel
-                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
+                    //if its my parcel or someone other take it
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||(parcel.getStatus()==ParcelStatus.ACCEPTED&&!parcel.getDeliveryName().equals(firebaseUser.getEmail())))
                         return;
 
 
@@ -239,7 +249,7 @@ public class ParcelDataSource {
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
 
                     //if someone offer the parcel or the location move; Remove the parcel
-                    if(distance>50.0||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY){
+                    if(distance>50.0||(!parcel.getDeliveryName().equals(firebaseUser.getEmail())&&(parcel.getStatus()==ParcelStatus.ON_THE_WAY||parcel.getStatus()==ParcelStatus.ACCEPTED))){
                         for(int i = 0; i< offerParcelList.size(); i++){
                             if(parcel.getParcelID().equals(offerParcelList.get(i).getParcelID())){
                                 offerParcelList.remove(i);
@@ -261,7 +271,7 @@ public class ParcelDataSource {
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
 
                     //if its my parcel
-                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||(parcel.getStatus()==ParcelStatus.ACCEPTED&&!parcel.getDeliveryName().equals(firebaseUser.getEmail())))
                         return;
 
                     for(int i = 0; i< offerParcelList.size(); i++){

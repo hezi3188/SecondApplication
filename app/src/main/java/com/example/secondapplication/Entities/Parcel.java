@@ -27,7 +27,7 @@ public class Parcel {
     private String customerId;
     private String address;
     private Map<String, Boolean> messengers;
-
+    private String phoneNumber;
 
 
 
@@ -46,6 +46,14 @@ public class Parcel {
 
     //--------------Ges&Set-----------------//
 
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public Map<String, Boolean> getMessengers() {
         return messengers;
@@ -163,8 +171,18 @@ public class Parcel {
     public String toString() {
         return "Parcel{" +
                 "parcelID='" + parcelID + '\'' +
+                ", parcelType=" + parcelType +
+                ", isFragile=" + isFragile +
+                ", parcelWeight=" + parcelWeight +
+                ", Latitude=" + Latitude +
+                ", Longitude=" + Longitude +
+                ", deliveryParcelDate=" + deliveryParcelDate +
+                ", getParcelDate=" + getParcelDate +
                 ", status=" + status +
+                ", deliveryName='" + deliveryName + '\'' +
                 ", customerId='" + customerId + '\'' +
+                ", address='" + address + '\'' +
+                ", messengers=" + messengers +
                 '}';
     }
 }

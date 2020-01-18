@@ -19,6 +19,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +38,7 @@ public class UserManagementViewModel extends AndroidViewModel {
     FirebaseAuth auth;
     public DatabaseReference reference;
     public static final String myPreference = "myUser";
+    public static final String myName = "myName";
     public static final String myLatitude = "latitudeKey";
     public static final String myLongitude = "longitudeKey";
     SharedPreferences sharedPreferences;

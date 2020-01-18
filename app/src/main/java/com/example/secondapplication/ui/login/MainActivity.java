@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import androidx.drawerlayout.widget.DrawerLayout;
 
@@ -48,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         startService(new Intent(getBaseContext(), ParcelService.class));
-
         userManagementViewModel =ViewModelProviders.of(this).get(UserManagementViewModel.class);
        // parcelViewModel=ViewModelProviders.of(this).get(ParcelViewModel.class);
 
@@ -77,21 +77,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow,
-                R.id.nav_tools, R.id.nav_share, R.id.nav_send)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setDrawerLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
@@ -101,8 +92,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //textView=(TextView)findViewById(R.id.text_home);
         parcels=new ArrayList<>();
 
+        View header=navigationView.getHeaderView(0);
 
 
+        FirebaseUser user=firebaseAuth.getCurrentUser();
+        //View hView =  navigationView.inflateHeaderView(R.layout.nav_header_main);
+        TextView textView= (TextView) header.findViewById(R.id.username_nav_header_main);
+        textView.setText(user.getEmail());
 
     }
 

@@ -14,7 +14,7 @@
 
         <TextView
             android:id="@+id/text_view_id_offer"
-            android:layout_width="272dp"
+            android:layout_width="284dp"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_marginEnd="3dp"
@@ -31,7 +31,7 @@
             android:layout_alignParentStart="true"
             android:layout_marginStart="2dp"
             android:layout_marginTop="2dp"
-            android:text="Name"
+            android:text="Customer id"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <TextView
@@ -48,17 +48,17 @@
             android:layout_marginBottom="116dp"
             android:text="Address" />
 
-        <TextView
+        <EditText
             android:id="@+id/message_offer"
-            android:layout_width="269dp"
-            android:layout_height="66dp"
+            android:layout_width="263dp"
+            android:layout_height="85dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
             android:layout_marginStart="1dp"
-            android:layout_marginTop="148dp"
+            android:layout_marginTop="129dp"
             android:layout_marginBottom="38dp"
-            android:text="Sms/Email" />
+            android:hint="Write message" />
 
         <Button
             android:id="@+id/button_send_offer"
@@ -95,11 +95,24 @@
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
+            android:enabled="true"
             android:layout_marginStart="16dp"
             android:layout_marginTop="204dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="2dp"
             android:text="I want to take the Parcel" />
+
+        <TextView
+            android:id="@+id/text_view_details_offer"
+            android:layout_width="102dp"
+            android:layout_height="120dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="285dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="132dp"
+            android:text="Details" />
 
 
     </RelativeLayout>

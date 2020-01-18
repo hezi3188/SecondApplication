@@ -27,13 +27,25 @@ public class ParcelRepository {
         allParcelsUserNotAccepted = parcelDao.getAllParcelsUserNotAccepted();
 
         ParcelDataSource.stopNotifyUserParcelList();
-        ParcelDataSource.notifyUserParcelList(new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
+        ParcelDataSource.notifyUserParcelList(new ParcelDataSource.OnUserNotify<Parcel>() {
             @Override
-            public void onDataChanged(List<Parcel> obj) {
+            public void onStart() {
                 deleteAllParcels();
-                for (Parcel p: obj) {
-                    insert(p);
-                }
+            }
+
+            @Override
+            public void onChildAdd(Parcel p) {
+                insert(p);
+            }
+
+            @Override
+            public void onChildUpdate(Parcel p) {
+                update(p);
+            }
+
+            @Override
+            public void onChildRemoved(Parcel p) {
+                delete(p);
             }
 
             @Override

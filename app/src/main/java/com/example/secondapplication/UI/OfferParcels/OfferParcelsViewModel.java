@@ -1,12 +1,10 @@
-package com.example.secondapplication.ui.login.ui.slideshow;
+package com.example.secondapplication.UI.OfferParcels;
 
 import android.app.Application;
 import android.widget.Toast;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.example.secondapplication.Entities.Parcel;
 import com.example.secondapplication.Model.ParcelDataSource;
@@ -14,12 +12,12 @@ import com.example.secondapplication.Model.ParcelRepository;
 
 import java.util.List;
 
-public class SlideshowViewModel extends AndroidViewModel {
+public class OfferParcelsViewModel extends AndroidViewModel {
 
     private ParcelRepository repository;
     private LiveData<List<Parcel>> mText;
 
-    public SlideshowViewModel(Application application) {
+    public OfferParcelsViewModel(Application application) {
         super(application);
         repository=new ParcelRepository(application);
         mText = repository.getAllOfferParcels(application);

@@ -2,10 +2,6 @@ package com.example.secondapplication.Entities;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-
-import com.example.secondapplication.Util.Converter;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,7 +78,6 @@ public class Parcel {
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
     }
-
 
     public String getParcelID() {
         return parcelID;

@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login.ui.home;
+package com.example.secondapplication.UI.MyParcels;
 
 import android.app.Application;
 import android.widget.Toast;
@@ -12,18 +12,15 @@ import com.example.secondapplication.Model.ParcelRepository;
 
 import java.util.List;
 
-public class HomeViewModel extends AndroidViewModel {
+public class MyParcelsViewModel extends AndroidViewModel {
 
     private ParcelRepository repository;
     private LiveData<List<Parcel>> allParcels;
 
-    public HomeViewModel(Application application) {
+    public MyParcelsViewModel(Application application) {
         super(application);
         repository = new ParcelRepository(application);
         allParcels=repository.getAllParcelsUserNotAccepted();
-        // allParcels.setValue("This is home fragment");
-
-
     }
 
 
@@ -64,8 +61,8 @@ public class HomeViewModel extends AndroidViewModel {
             }
         });
     }
-    public LiveData<List<Parcel>> getText() {
 
+    public LiveData<List<Parcel>> getText() {
         return allParcels;
     }
 }

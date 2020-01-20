@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login.ui.slideshow;
+package com.example.secondapplication.UI.OfferParcels;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.telephony.SmsManager;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -27,7 +27,6 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.secondapplication.Entities.Parcel;
 import com.example.secondapplication.Entities.ParcelStatus;
 import com.example.secondapplication.R;
@@ -35,23 +34,22 @@ import com.example.secondapplication.Util.Converter;
 import com.example.secondapplication.Util.Utils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SlideshowFragment extends Fragment {
+public class OfferParcelsFragment extends Fragment {
 
-    private SlideshowViewModel slideshowViewModel;
+    private OfferParcelsViewModel offerParcelsViewModel;
     private RecyclerView offerParcelsRecyclerView;
     private FirebaseAuth auth;
     private FirebaseUser user;
     View root;
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        slideshowViewModel =
-                ViewModelProviders.of(this).get(SlideshowViewModel.class);
+        offerParcelsViewModel =
+                ViewModelProviders.of(this).get(OfferParcelsViewModel.class);
         root = inflater.inflate(R.layout.fragment_slideshow, container, false);
         offerParcelsRecyclerView=root.findViewById(R.id.offer_recycler_view);
         offerParcelsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -60,7 +58,7 @@ public class SlideshowFragment extends Fragment {
         offerParcelsRecyclerView.setAdapter(adapter);
         auth=FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
-        slideshowViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        offerParcelsViewModel.getText().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);
@@ -81,11 +79,9 @@ public class SlideshowFragment extends Fragment {
             return parcelList.get(position);
         }
 
-
         @Override
         public void onBindViewHolder(@NonNull final OfferRecyclerView.ParcelViewHolder holder, int position) {
             final Parcel parcel=parcelList.get(position);
-
 
             DateFormat dateFormat = new SimpleDateFormat("[dd/MM/yyyy]");
             holder.idTextView.setBackgroundColor(Color.LTGRAY);
@@ -96,14 +92,16 @@ public class SlideshowFragment extends Fragment {
                     Converter.fromParcelWeightToString(parcel.getParcelWeight())
                     +" and "+(parcel.isFragile()?"fragile":"no-fragile")+" from "+dateFormat.format(parcel.getGetParcelDate()));
 
+
             if(parcel.getStatus()== ParcelStatus.ACCEPTED){
                 holder.addDeliveryButton.setEnabled(false);
                 holder.addDeliveryButton.setText("The parcel arrived, thanks!!!");
                 holder.addDeliveryButton.setBackgroundColor(Color.GREEN);
             }
+
             else if(parcel.getMessengers().containsKey(Utils.encodeUserEmail(user.getEmail()))){
                 holder.addDeliveryButton.setEnabled(false);
-                holder.addDeliveryButton.setBackgroundColor(Color.GRAY);
+                holder.addDeliveryButton.setBackgroundColor(Color.LTGRAY);
                 if(parcel.getMessengers().get(Utils.encodeUserEmail(user.getEmail()))==true){
                     holder.addDeliveryButton.setText("You selected to take the parcel");
                 }
@@ -119,7 +117,7 @@ public class SlideshowFragment extends Fragment {
             holder.addDeliveryButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    slideshowViewModel.addDelivery(parcel.getParcelID(),user.getEmail());
+                    offerParcelsViewModel.addDelivery(parcel.getParcelID(),user.getEmail());
                 }
             });
             holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -129,17 +127,14 @@ public class SlideshowFragment extends Fragment {
                     if(selectedItem==0){
                         holder.sendMessageButton.setText("SEND");
                         holder.messageEditText.setEnabled(true);
-                        Toast.makeText(getActivity(), "Send message successfully", Toast.LENGTH_SHORT).show();
                     }
                     else if(selectedItem==1){
                         holder.sendMessageButton.setText("SEND");
                         holder.messageEditText.setEnabled(true);
-                        Toast.makeText(getActivity(), "Send email successfully", Toast.LENGTH_SHORT).show();
                     }
                     else {
                         holder.sendMessageButton.setText("CALL");
                         holder.messageEditText.setEnabled(false);
-                        Toast.makeText(getActivity(), "Calling...", Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -151,9 +146,15 @@ public class SlideshowFragment extends Fragment {
             holder.sendMessageButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
                     int selectedItem=(int)holder.spinner.getSelectedItemPosition();
                     if(selectedItem==0){
-
+                        //if no message writer
+                        if(TextUtils.isEmpty(holder.messageEditText.getText().toString().trim())){
+                            Toast.makeText(getActivity(), "Enter message", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        //ask for permission
                         // Here, thisActivity is the current activity
                         if (ContextCompat.checkSelfPermission(getActivity(),
                                 Manifest.permission.SEND_SMS)
@@ -169,19 +170,23 @@ public class SlideshowFragment extends Fragment {
                         else {
                             // Permission has already been granted
                             //Getting intent and PendingIntent instance
-                            Intent intent=new Intent(getContext(),SlideshowFragment.class);
+                            Intent intent=new Intent(getContext(), OfferParcelsFragment.class);
                             PendingIntent pi=PendingIntent.getActivity(getContext(), 0, intent,0);
 
                             //Get the SmsManager instance and call the sendTextMessage method to send message
                             SmsManager sms=SmsManager.getDefault();
-                            sms.sendTextMessage("0543411320", null, holder.messageEditText.getText().toString(), pi,null);
+                            sms.sendTextMessage(parcel.getPhoneNumber(), null, holder.messageEditText.getText().toString(), pi,null);
+                            Toast.makeText(getActivity(), "Send successful", Toast.LENGTH_SHORT).show();
                             holder.messageEditText.setText("");
-                            Toast.makeText(getActivity(), "Send message successfully", Toast.LENGTH_SHORT).show();
-                            // Toast.makeText(getActivity(), "Calling...", Toast.LENGTH_SHORT).show();
                         }
 
                     }
                     else if(selectedItem==1){
+                        //if no message writer
+                        if(TextUtils.isEmpty(holder.messageEditText.getText().toString().trim())){
+                            Toast.makeText(getActivity(), "Enter message", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         Intent email = new Intent(Intent.ACTION_SEND);
                         email.putExtra(Intent.EXTRA_EMAIL, new String[]{ parcel.getCustomerId()});
                         email.putExtra(Intent.EXTRA_SUBJECT, user.getEmail()+" want to take your parcel");
@@ -191,9 +196,11 @@ public class SlideshowFragment extends Fragment {
                         email.setType("message/rfc822");
 
                         startActivity(Intent.createChooser(email, "Choose an Email client :"));
+                        Toast.makeText(getActivity(), "Send successful", Toast.LENGTH_SHORT).show();
                         holder.messageEditText.setText("");
                     }
                     else {
+                        //ask permission
                         // Here, thisActivity is the current activity
                         if (ContextCompat.checkSelfPermission(getActivity(),
                                 Manifest.permission.CALL_PHONE)
@@ -209,7 +216,7 @@ public class SlideshowFragment extends Fragment {
                         else {
                             // Permission has already been granted
                             Intent callIntent = new Intent(Intent.ACTION_CALL);
-                            callIntent.setData(Uri.parse("tel:91-000-000-0000"));
+                            callIntent.setData(Uri.parse("tel:"+parcel.getPhoneNumber()));
                             startActivity(callIntent);
                            // Toast.makeText(getActivity(), "Calling...", Toast.LENGTH_SHORT).show();
                         }

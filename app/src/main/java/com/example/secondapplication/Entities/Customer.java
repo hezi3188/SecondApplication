@@ -1,19 +1,7 @@
 package com.example.secondapplication.Entities;
 
-import com.google.firebase.database.Exclude;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import androidx.annotation.NonNull;
-import androidx.room.Entity;
-import androidx.room.Ignore;
-import androidx.room.PrimaryKey;
-
-@Entity(tableName = "customer_table")
 public class Customer {
-    @PrimaryKey
-    @NonNull
     private String id;
     private String firstName;
     private String lastName;
@@ -27,8 +15,7 @@ public class Customer {
     public Customer() {
     }
 
-    @Ignore
-    public Customer(@NonNull String id, String firstName, String lastName, String address, double latitude, double longitude, String phoneNumber, String email) {
+    public Customer( String id, String firstName, String lastName, String address, double latitude, double longitude, String phoneNumber, String email) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;

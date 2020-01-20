@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login;
+package com.example.secondapplication.UI.UserMangemant;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -13,9 +13,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.secondapplication.R;
-import com.example.secondapplication.ui.login.ui.UserManagementViewModel;
+import com.example.secondapplication.UI.ProfileActivity;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -26,7 +25,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private TextView textViewSignup;
 
     UserManagementViewModel userManagementViewModel;
-    public DatabaseReference reference;
     private FirebaseAuth firebaseAuth;
 
     private ProgressDialog progressDialog;
@@ -36,9 +34,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setContentView(R.layout.activity_login);
 
         userManagementViewModel =ViewModelProviders.of(this).get(UserManagementViewModel.class);
-
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        reference=database.getReference("customers");
         firebaseAuth=FirebaseAuth.getInstance();
 
         //if the user login go to profile activity
@@ -46,7 +42,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
             //profile activity
             finish();
-            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+            startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
         }
 
         //start views
@@ -69,7 +65,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         if(v==textViewSignup){
             //go to sign up
             finish();
-            startActivity(new Intent(this,RegisterActivity.class));
+            startActivity(new Intent(this, RegisterActivity.class));
         }
     }
 
@@ -96,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 progressDialog.dismiss();
                 Toast.makeText(LoginActivity.this, obj, Toast.LENGTH_SHORT).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
 
             @Override

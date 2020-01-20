@@ -1,10 +1,7 @@
-package com.example.secondapplication.ui.login;
+package com.example.secondapplication.UI.UserMangemant;
 
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Geocoder;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
@@ -18,17 +15,10 @@ import android.widget.Toast;
 import com.example.secondapplication.Entities.Customer;
 import com.example.secondapplication.R;
 import com.example.secondapplication.Util.LocationAutoComplate.PlaceAutoSuggestAdapter;
-import com.example.secondapplication.ViewModel.CustomerViewModel;
-import com.example.secondapplication.ui.login.ui.UserManagementViewModel;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import java.util.Locale;
+import com.example.secondapplication.UI.ProfileActivity;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private FirebaseDatabase databaseReference;
-    private DatabaseReference reference;
     private UserManagementViewModel userManagementViewModel;
 
     private EditText usernameEditText;
@@ -52,8 +42,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         userManagementViewModel = ViewModelProviders.of(this).get(UserManagementViewModel.class);
 
         //load views
-        databaseReference=FirebaseDatabase.getInstance();
-        reference=databaseReference.getReference("customers");
         progressDialog=new ProgressDialog(this);
         usernameEditText=(EditText)findViewById(R.id.username);
         passwordEditText=(EditText) findViewById(R.id.password);
@@ -77,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             registerUser();
         }
         if(v==signInTextView){
-            startActivity(new Intent(this,LoginActivity.class));
+            startActivity(new Intent(this, LoginActivity.class));
         }
     }
 
@@ -140,11 +128,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 progressDialog.dismiss();
                 Toast.makeText(RegisterActivity.this, obj, Toast.LENGTH_SHORT).show();
                 finish();
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(getApplicationContext(), ProfileActivity.class));
             }
 
             @Override
             public void OnFailure(Exception exception) {
+                progressDialog.dismiss();
                 Toast.makeText(RegisterActivity.this, exception.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });

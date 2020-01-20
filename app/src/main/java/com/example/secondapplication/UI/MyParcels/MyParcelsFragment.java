@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login.ui.home;
+package com.example.secondapplication.UI.MyParcels;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,11 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HomeFragment extends Fragment {
+public class MyParcelsFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private MyParcelsViewModel myParcelsViewModel;
     private RecyclerView notAcceptedParcelsRecyclerView;
     View root;
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_home, container, false);
@@ -42,46 +43,35 @@ public class HomeFragment extends Fragment {
         notAcceptedParcelsRecyclerView.setHasFixedSize(true);
         final  NotAcceptedRecyclerView adapter=new NotAcceptedRecyclerView();
         notAcceptedParcelsRecyclerView.setAdapter(adapter);
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
-        homeViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        myParcelsViewModel =
+                ViewModelProviders.of(this).get(MyParcelsViewModel.class);
+        myParcelsViewModel.getText().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);
             }
         });
-        Toast.makeText(getContext(), "onCreate", Toast.LENGTH_SHORT).show();
-        //Address address=Utils.getLocationFromAddress(new Geocoder(getActivity()), "הוועד הלאומי, jerusalem");
-        //Address address2=Utils.getLocationFromAddress(new Geocoder(getActivity()), "הרב פתאל 45, jerusalem");
-        //double n=Utils.distanceBetweenTwoLocations(address.getLatitude(),address.getLongitude(),address2.getLatitude(),address2.getLongitude());
         return root;
-
-
     }
 
     @Override
     public void onResume() {
-        Toast.makeText(getContext(), "onResum", Toast.LENGTH_SHORT).show();
         super.onResume();
     }
 
     @Override
     public void onPause() {
-        Toast.makeText(getContext(), "onPause", Toast.LENGTH_SHORT).show();
         super.onPause();
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(getContext(), "onDestory", Toast.LENGTH_SHORT).show();
-
-        //ParcelDataSource.stopNotifyOffersParcelList();
         super.onDestroy();
     }
 
 
+    //Class for recyclerView
     public class NotAcceptedRecyclerView extends RecyclerView.Adapter<NotAcceptedRecyclerView.ParcelViewHolder>{
-
         List<Parcel> parcelList=new ArrayList<>();
         @NonNull
         @Override
@@ -89,10 +79,12 @@ public class HomeFragment extends Fragment {
             View v = LayoutInflater.from(getActivity().getBaseContext()).inflate(R.layout.not_accepted_parcel_item,parent,false);
             return new ParcelViewHolder(v);
         }
+
         public Parcel getNoteAt(int position) {
             return parcelList.get(position);
         }
 
+        //return all delivers
         public ArrayList<String> getDelivers(Map<String,Boolean> delivers){
             ArrayList<String> arrayList=new ArrayList<>();
             arrayList.add("Choose delivery");
@@ -101,17 +93,13 @@ public class HomeFragment extends Fragment {
             }
             return arrayList;
         }
+
         @Override
         public void onBindViewHolder(@NonNull final ParcelViewHolder holder, int position) {
             final Parcel parcel=parcelList.get(position);
             DateFormat dateFormat = new SimpleDateFormat("[dd/MM/yyyy]");
             ArrayList<String> delivers=new ArrayList<>();
             ArrayAdapter<String> spinnerArrayAdapter;
-            if(!parcel.getDeliveryName().equals("NO")){
-
-
-            }
-
 
             holder.idTextView.setBackgroundColor(Color.LTGRAY);
             holder.idTextView.setText("Id:"+parcel.getParcelID());
@@ -119,6 +107,8 @@ public class HomeFragment extends Fragment {
             holder.descriptionTextView.setText("Desc: "+Converter.fromParcelTypeToString(parcel.getParcelType())+",  "+
                     Converter.fromParcelWeightToString(parcel.getParcelWeight())+"\n           "
             +"and "+(parcel.isFragile()?"fragile":"no-fragile")+" from "+dateFormat.format(parcel.getGetParcelDate()));
+
+            //if the parcel sent
             if(parcel.getStatus()== ParcelStatus.SENT){
                 holder.statusTextView.setTextColor(Color.RED);
                 holder.offerDeliversSpinner.setAdapter(null);
@@ -130,6 +120,8 @@ public class HomeFragment extends Fragment {
                 holder.button.setEnabled(false);
                 holder.button.setText("No delivers offers");
             }
+
+            //if someone offer the parcel
             if(parcel.getStatus()==ParcelStatus.IN_COLLECTION_PROCESS){
                 holder.statusTextView.setTextColor(Color.rgb(255,165,0));
                 holder.offerDeliversSpinner.setEnabled(true);
@@ -147,11 +139,13 @@ public class HomeFragment extends Fragment {
                             Toast.makeText(getActivity(), "choose deliver", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        homeViewModel.confirmDelivery(parcel.getParcelID(),holder.offerDeliversSpinner.getSelectedItem().toString());
+                        myParcelsViewModel.confirmDelivery(parcel.getParcelID(),holder.offerDeliversSpinner.getSelectedItem().toString());
 
                     }
                 });
             }
+
+            //if confirmed deliver
             if(parcel.getStatus()==ParcelStatus.ON_THE_WAY){
                 holder.statusTextView.setTextColor(Color.YELLOW);
                 holder.offerDeliversSpinner.setAdapter(null);
@@ -165,12 +159,13 @@ public class HomeFragment extends Fragment {
                 holder.button.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        homeViewModel.acceptedParcel(parcel.getParcelID());
+                        myParcelsViewModel.acceptedParcel(parcel.getParcelID());
                     }
                 });
 
             }
         }
+
         public void setParcels(List<Parcel> parcels) {
             this.parcelList = parcels;
             notifyDataSetChanged();

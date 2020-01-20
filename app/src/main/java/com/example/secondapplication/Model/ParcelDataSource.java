@@ -88,10 +88,14 @@ public class ParcelDataSource {
                 return;
             }
             userParcelList.clear();
-            notifyParcelsDataChange.onStart();
+            final boolean[] flag = {true};
             parcelsUserChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    if(flag[0] ==true){
+                        notifyParcelsDataChange.onStart();
+                        flag[0] =false;
+                    }
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
                     //userParcelList.add(parcel);
                     notifyParcelsDataChange.onChildAdd(parcel);

@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login.ui;
+package com.example.secondapplication.UI.UserMangemant;
 
 import android.app.Application;
 import android.content.Context;
@@ -12,14 +12,13 @@ import com.example.secondapplication.Entities.Customer;
 import com.example.secondapplication.Model.ParcelDataSource;
 import com.example.secondapplication.Model.ParcelRepository;
 import com.example.secondapplication.Util.Utils;
-import com.example.secondapplication.ui.login.ParcelService;
+import com.example.secondapplication.UI.Service.ParcelService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -82,7 +81,7 @@ public class UserManagementViewModel extends AndroidViewModel {
 
                         }
                         else {
-                             action.OnFailure(new Exception("Could not register please try again!"));
+                             action.OnFailure(new Exception(task.getException().getMessage()));
                         }
                     }
                 });
@@ -102,7 +101,7 @@ public class UserManagementViewModel extends AndroidViewModel {
                             editor.putString(myLongitude,String.valueOf(customer.getLongitude()));
                             editor.putString(myLatitude,String.valueOf(customer.getLatitude()));
                             editor.commit();
-                            action.OnSuccess("Register succeed");
+                            action.OnSuccess("Login succeed");
                         }
 
                         @Override
@@ -113,7 +112,7 @@ public class UserManagementViewModel extends AndroidViewModel {
 
                 }
                 else
-                    action.OnFailure(new Exception("Fail register, please try again!"));
+                    action.OnFailure(new Exception(task.getException().getMessage()));
             }
         });
     }

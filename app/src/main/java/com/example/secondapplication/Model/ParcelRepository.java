@@ -5,28 +5,37 @@ import android.content.Context;
 import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import com.example.secondapplication.Entities.Customer;
+
 import com.example.secondapplication.Entities.Parcel;
 
 import java.util.List;
 
 public class ParcelRepository {
 
+
+
     private static ParcelDao parcelDao;
 
     private LiveData<List<Parcel>> allParcelsUserNotAccepted;
     private LiveData<List<Parcel>> allParcelsUserAccepted;
+    private static MutableLiveData<List<Parcel>> offer;
 
+    private MutableLiveData<List<Parcel>> getOfferData(){
+        if(offer!=null)
+            return offer;
+        return new MutableLiveData<>();
+    }
 
     public ParcelRepository(Application application) {
-        ParcelDatabase parcelDatabase = ParcelDatabase.getInstance(application);
-        parcelDao = parcelDatabase.parcelDao();
 
         //load parcels
+        ParcelDatabase parcelDatabase = ParcelDatabase.getInstance(application);
+        parcelDao = parcelDatabase.parcelDao();
+        offer= getOfferData();
         allParcelsUserAccepted = parcelDao.getAllParcelsUserAccepted();
         allParcelsUserNotAccepted = parcelDao.getAllParcelsUserNotAccepted();
 
-        ParcelDataSource.stopNotifyUserParcelList();
+        //notify
         ParcelDataSource.notifyUserParcelList(new ParcelDataSource.OnUserNotify<Parcel>() {
             @Override
             public void onStart() {
@@ -59,7 +68,9 @@ public class ParcelRepository {
 
 
 
-    public void insert(Parcel parcel) { new InsertParcelAsyncTask(parcelDao).execute(parcel);}
+    public void insert(Parcel parcel) {
+        new InsertParcelAsyncTask(parcelDao).execute(parcel);
+    }
 
     public void update(Parcel parcel) {
         new UpdateParcelAsyncTask(parcelDao).execute(parcel);
@@ -80,8 +91,6 @@ public class ParcelRepository {
     public LiveData<List<Parcel>> getAllParcelsUserNotAccepted(){return allParcelsUserNotAccepted;}
 
     public LiveData<List<Parcel>> getAllOfferParcels(Context context){
-        ParcelDataSource.stopNotifyOffersParcelList();
-        final MutableLiveData<List<Parcel>> offer=new MutableLiveData<>();
         ParcelDataSource.notifyOffersParcelList(context,new ParcelDataSource.NotifyDataChange<List<Parcel>>() {
             @Override
             public void onDataChanged(List<Parcel> obj) {
@@ -97,22 +106,21 @@ public class ParcelRepository {
         return offer;
     }
 
-    public  void acceptedParcel(String id, final ParcelDataSource.Action<String> action){
+    public void acceptedParcel(String id, final ParcelDataSource.Action<String> action){
         ParcelDataSource.acceptedParcel(id,action);
     }
 
-    public  void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+    public void addDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.addDelivery(id,deliveryName,action);
     }
 
-    public  void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
+    public void confirmDelivery(final String id, final String deliveryName, final ParcelDataSource.Action<String> action){
         ParcelDataSource.confirmDelivery(id,deliveryName,action);
     }
 
 
 
     //region AsyncTask implementation
-
     private static class InsertParcelAsyncTask extends AsyncTask<Parcel, Void, Void> {
         private ParcelDao parcelDao;
 

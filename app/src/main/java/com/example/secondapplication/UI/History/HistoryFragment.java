@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login.ui.gallery;
+package com.example.secondapplication.UI.History;
 
 import android.graphics.Color;
 import android.os.Bundle;
@@ -22,9 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class GalleryFragment extends Fragment {
+public class HistoryFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private HistoryViewModel historyViewModel;
     private RecyclerView acceptedParcelRecyclerView;
     View root;
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -36,9 +36,9 @@ public class GalleryFragment extends Fragment {
         acceptedParcelRecyclerView.setHasFixedSize(true);
         final AcceptedRecyclerView adapter=new AcceptedRecyclerView();
         acceptedParcelRecyclerView.setAdapter(adapter);
-        galleryViewModel =
-                ViewModelProviders.of(this).get(GalleryViewModel.class);
-        galleryViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        historyViewModel =
+                ViewModelProviders.of(this).get(HistoryViewModel.class);
+        historyViewModel.getText().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);
@@ -62,11 +62,11 @@ public class GalleryFragment extends Fragment {
             return parcelList.get(position);
         }
 
-
         public void setParcels(List<Parcel> parcels) {
             this.parcelList = parcels;
             notifyDataSetChanged();
         }
+
         @Override
         public void onBindViewHolder(@NonNull AcceptedRecyclerView.ParcelViewHolder holder, int position) {
             Parcel parcel=parcelList.get(position);
@@ -78,7 +78,6 @@ public class GalleryFragment extends Fragment {
             holder.statusTextView.setText(Converter.fromParcelStatusToString(parcel.getStatus()));
             holder.statusTextView.setTextColor(Color.GREEN);
             holder.weightTextView.setText(Converter.fromParcelWeightToString(parcel.getParcelWeight()));
-
         }
 
         @Override
@@ -86,7 +85,6 @@ public class GalleryFragment extends Fragment {
             return parcelList.size();
         }
         class ParcelViewHolder extends RecyclerView.ViewHolder{
-
             TextView idTextView;
             TextView statusTextView;
             TextView typeTextView;

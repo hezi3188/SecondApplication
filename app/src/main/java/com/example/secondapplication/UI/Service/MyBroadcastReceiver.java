@@ -1,4 +1,4 @@
-package com.example.secondapplication.ui.login;
+package com.example.secondapplication.UI.Service;
 
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -14,6 +14,7 @@ import android.os.Build;
 import androidx.core.app.NotificationCompat;
 
 import com.example.secondapplication.R;
+import com.example.secondapplication.UI.ProfileActivity;
 
 import java.util.Random;
 
@@ -27,7 +28,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         NotificationChannel notificationChannel;
         NotificationManager notificationManager;
         final PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
-                new Intent(context, MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
+                new Intent(context, ProfileActivity.class), PendingIntent.FLAG_UPDATE_CURRENT);
         String destination = intent.getStringExtra("dest");
         notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)

@@ -2,11 +2,8 @@ package com.example.secondapplication.Model;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.provider.ContactsContract;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-
 import com.example.secondapplication.Entities.Parcel;
 import com.example.secondapplication.Entities.ParcelStatus;
 import com.example.secondapplication.Util.Utils;
@@ -37,6 +34,7 @@ public class ParcelDataSource {
             instance=new ParcelDataSource();
         return instance;
     }
+    //--------interfaces-----------//
     public interface OnUserNotify<Parcel>{
         void onStart();
         void onChildAdd(Parcel p);
@@ -44,7 +42,6 @@ public class ParcelDataSource {
         void onChildRemoved(Parcel p);
         void onFailure(Exception exception);
     }
-    //--------interfaces-----------//
     public interface  Action<T>{
         void OnSuccess(T obj);
         void OnFailure(Exception exception);
@@ -88,7 +85,7 @@ public class ParcelDataSource {
                 return;
             }
             userParcelList.clear();
-            final boolean[] flag = {true};
+            final boolean[] flag = {true};//for check start notify
             parcelsUserChildEventListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -97,7 +94,6 @@ public class ParcelDataSource {
                         flag[0] =false;
                     }
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
-                    //userParcelList.add(parcel);
                     notifyParcelsDataChange.onChildAdd(parcel);
                 }
 
@@ -105,27 +101,12 @@ public class ParcelDataSource {
                 public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
                     notifyParcelsDataChange.onChildUpdate(parcel);
-/*
-                    for(int i = 0; i< userParcelList.size(); i++){
-                        if(parcel.getParcelID().equals(userParcelList.get(i).getParcelID())){
-                            //userParcelList.set(i,parcel);
-                            notifyParcelsDataChange.onChildUpdate(parcel);
-                        }
-                    }*/
-                   // notifyParcelsDataChange.onDataChanged(userParcelList);
                 }
 
                 @Override
                 public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
                     notifyParcelsDataChange.onChildRemoved(parcel);
-                  /*  for(int i = 0; i< userParcelList.size(); i++){
-                        if(parcel.getParcelID().equals(userParcelList.get(i).getParcelID())){
-                            userParcelList.remove(i);
-                            break;
-                        }
-                    }
-                    notifyParcelsDataChange.onDataChanged(userParcelList);*/
                 }
 
                 @Override
@@ -173,10 +154,12 @@ public class ParcelDataSource {
                     //if the user logout
                     if(firebaseAuth.getCurrentUser()==null)
                         return;
+
                     //calculate distance location
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
 
                     firebaseUser=firebaseAuth.getCurrentUser();
+
                     //if its my parcel
                     if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||parcel.getStatus()==ParcelStatus.ACCEPTED||parcel.getStatus()==ParcelStatus.ON_THE_WAY)
                         return;
@@ -233,13 +216,15 @@ public class ParcelDataSource {
                 @Override
                 public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                     Parcel parcel = dataSnapshot.getValue(Parcel.class);
+
                     //calculate distance location
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
+
                     firebaseUser=firebaseAuth.getCurrentUser();
+
                     //if its my parcel or someone other take it
                     if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||(parcel.getStatus()==ParcelStatus.ACCEPTED&&!parcel.getDeliveryName().equals(firebaseUser.getEmail())))
                         return;
-
 
                     offerParcelList.add(parcel);
                     notifyParcelsDataChange.onDataChanged(offerParcelList);
@@ -261,6 +246,7 @@ public class ParcelDataSource {
                         }
                     }
 
+                    //change child
                     for(int i = 0; i< offerParcelList.size(); i++){
                         if(parcel.getParcelID().equals(offerParcelList.get(i).getParcelID())){
                             offerParcelList.set(i,parcel);
@@ -275,7 +261,8 @@ public class ParcelDataSource {
                     double distance=Utils.distanceBetweenTwoLocations(latitude,longitude,parcel.getLatitude(),parcel.getLongitude());
 
                     //if its my parcel
-                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||(parcel.getStatus()==ParcelStatus.ACCEPTED&&!parcel.getDeliveryName().equals(firebaseUser.getEmail())))
+                    if(distance>50.0||(parcel.getCustomerId()).equals(firebaseUser.getEmail())||
+                            (parcel.getStatus()==ParcelStatus.ACCEPTED&&!parcel.getDeliveryName().equals(firebaseUser.getEmail())))
                         return;
 
                     for(int i = 0; i< offerParcelList.size(); i++){
@@ -335,7 +322,7 @@ public class ParcelDataSource {
                 reference.child(id).setValue(parcel).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
-                        action.OnSuccess("Added delivery");
+                        action.OnSuccess("Added delivery successful");
                     }
                 }).addOnFailureListener(new OnFailureListener() {
                     @Override

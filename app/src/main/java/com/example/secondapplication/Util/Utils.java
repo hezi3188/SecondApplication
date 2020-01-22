@@ -30,6 +30,20 @@ public class Utils  {
 
     }
 
+    public static boolean realLocation(Geocoder coder,String strAddress){
+        List<Address> address;
+        Address location=null;
+        try {
+            // May throw an IOException
+            address = coder.getFromLocationName(strAddress, 5);
+            if (address.size()==0) {
+                return false;
+            }
+        } catch (IOException ex) {
+            return false;
+        }
+        return true;
+    }
     public static Address getLocationFromAddress(Geocoder coder,String strAddress) {
 
         List<Address> address;

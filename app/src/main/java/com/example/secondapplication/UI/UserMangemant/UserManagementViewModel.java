@@ -54,6 +54,10 @@ public class UserManagementViewModel extends AndroidViewModel {
 
     public void register(final String email, final String password, final Customer newCustomer ,final Action<String> action){
         final Geocoder geocoder = new Geocoder(getApplication(), Locale.getDefault());
+        if(Utils.realLocation(geocoder,newCustomer.getAddress())==false){
+            action.OnFailure(new Exception("The location error or no connection to internet, please enter a real location or connection Internet!"));
+            return;
+        }
         auth.createUserWithEmailAndPassword(email,password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override

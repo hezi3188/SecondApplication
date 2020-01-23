@@ -41,7 +41,7 @@ public class OfferParcelsViewModel extends AndroidViewModel {
             }
         });
     }
-    public LiveData<List<Parcel>> getText() {
+    public LiveData<List<Parcel>> getOfferParcels() {
         return mText;
     }
 }

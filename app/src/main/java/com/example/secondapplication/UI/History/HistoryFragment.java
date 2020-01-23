@@ -38,7 +38,7 @@ public class HistoryFragment extends Fragment {
         acceptedParcelRecyclerView.setAdapter(adapter);
         historyViewModel =
                 ViewModelProviders.of(this).get(HistoryViewModel.class);
-        historyViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        historyViewModel.getHistoryParcels().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);

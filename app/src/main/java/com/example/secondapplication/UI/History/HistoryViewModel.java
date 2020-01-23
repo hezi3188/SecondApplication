@@ -22,7 +22,7 @@ public class HistoryViewModel extends AndroidViewModel {
         allParcels = repository.getAllParcelsUserAccepted();
     }
 
-    public LiveData<List<Parcel>> getText() {
+    public LiveData<List<Parcel>> getHistoryParcels() {
         return allParcels;
     }
 }

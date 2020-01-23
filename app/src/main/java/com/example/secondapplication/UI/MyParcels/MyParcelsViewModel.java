@@ -62,7 +62,7 @@ public class MyParcelsViewModel extends AndroidViewModel {
         });
     }
 
-    public LiveData<List<Parcel>> getText() {
+    public LiveData<List<Parcel>> getMyParcels() {
         return allParcels;
     }
 }

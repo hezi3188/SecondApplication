@@ -45,7 +45,7 @@ public class MyParcelsFragment extends Fragment {
         notAcceptedParcelsRecyclerView.setAdapter(adapter);
         myParcelsViewModel =
                 ViewModelProviders.of(this).get(MyParcelsViewModel.class);
-        myParcelsViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        myParcelsViewModel.getMyParcels().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);

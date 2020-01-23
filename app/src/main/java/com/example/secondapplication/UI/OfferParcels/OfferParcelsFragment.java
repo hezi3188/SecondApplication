@@ -58,7 +58,7 @@ public class OfferParcelsFragment extends Fragment {
         offerParcelsRecyclerView.setAdapter(adapter);
         auth=FirebaseAuth.getInstance();
         user=auth.getCurrentUser();
-        offerParcelsViewModel.getText().observe(this, new Observer<List<Parcel>>() {
+        offerParcelsViewModel.getOfferParcels().observe(this, new Observer<List<Parcel>>() {
             @Override
             public void onChanged(List<Parcel> parcels) {
                 adapter.setParcels(parcels);
